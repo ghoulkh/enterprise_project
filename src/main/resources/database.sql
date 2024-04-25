@@ -1,0 +1,1 @@
+ALTER TABLE enterprise_project.product ADD FULLTEXT INDEX full_text_index (title) VISIBLE

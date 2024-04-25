@@ -1,0 +1,808 @@
+{
+	"info": {
+		"_postman_id": "d0537bb2-c3e1-4f63-ab6b-96160ea4c083",
+		"name": "an-phat",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18477377"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Home",
+			"item": [
+				{
+					"name": "Lưu nội dung màn home",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"companyName\":\"An Phát\",\n    \"bottomTexts\":[\"An Phát\", \"An Phát 2\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/home",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"home"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy nội dung màn home",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/home",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"home"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Lấy dịch vụ theo tên cha",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/category/parent-name/SERVICE",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"category",
+								"parent-name",
+								"SERVICE"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chỉnh sửa dịch vụ theo id",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Dịch vụ làm WEB 2\",\n    \"parentName\":\"PRODUCT\"\n}"
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/category/2",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"category",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Thêm mới một dịch vụ theo tên",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"In lịch\",\n    \"parentId\" :1\n}"
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/category",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Xoá dịch vụ theo id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/category/3",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"category",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy danh sách dịch vụ dự trên parent id và search và lọc",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}"
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/category/parent-id/1",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"category",
+								"parent-id",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AboutUs",
+			"item": [
+				{
+					"name": "Lấy nội dung màn về chúng tôi",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/about-us",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"about-us"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chỉnh sửa nội dung màn về chúng tôi",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"An phat\",\n    \"description\":\"an phat\",\n    \"content\":\"content\",\n    \"contact\":\"contact\",\n    \"address\":\"address\",\n    \"imagesUrl\":[\"saasd\", \"adasd\"],\n    \"authorPostRequest\":{\n        \"fullName\":\"Duong dang Phi\", \n        \"role\" :\"culi\",\n        \"socialLink\":\"fb.com\"\n    },\n    \n    \"ourPhilosophiesRequest\":[{\n        \"title\":\"title\", \n        \"content\":\"content\",\n        \"imageUrl\":\"image\", \n        \"logoImageUrl\":\"asdadsdas\"\n    }],\n    \"memberRequests\":[{\n        \"fullName\":\"pullNae\",\n        \"imageUrl\":\"Adadas\",\n        \"role\":\"@323\"\n    }, \n    {\n        \"fullName\":\"Dương Đăng Phi\",\n        \"imageUrl\":\"Adadas\",\n        \"role\":\"@dd\"\n    }]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/about-us",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"about-us"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Thêm mới sản phẩm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"Sản phẩm \",\n    \"productName\":\"Lịch\",\n    \"content\" :\"Lịch để bàn\",\n    \"productOrder\":2,\n    \"categoryIds\":[3]\n}"
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy sản phẩm theo categoryId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product/category/2",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product",
+								"category",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cập nhật ",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"price\":3434\n}"
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product/7",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Xóa một sản phẩm",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product/111",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product",
+								"111"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tìm kiếm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"keyword\":\"san pham\",\n    \"sortByTitle\":\"ASC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product/search",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy toàn bộ sản phẩm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://anphat.120ddp.xyz/api/product/list",
+							"protocol": "https",
+							"host": [
+								"anphat",
+								"120ddp",
+								"xyz"
+							],
+							"path": [
+								"api",
+								"product",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "Tạo mới một blog",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Blog title\",\n    \"content\": \"Tôi từng đọc được bình luận của học trò: Đề thi thì ghi nêu cảm nhận của em, nhưng đáp án lại chấm theo ý của thầy cô. Thực ra, không phải chúng tôi chấm theo ý của thầy cô mà là chấm theo khung đáp án của Bộ, và để có điểm, ý tứ trong bài văn của các em phải phù hợp với đáp án. Đa số học sinh đều lựa chọn cách nhanh nhất để làm được điều đó, đó là học từ văn mẫu\",\n    \"categoryIds\": [\n        2\n    ],\n    \"imagesUrl\": [\n        \"dasadsdsas\",\n        \"asdsadsad\"\n    ],\n    \"previewContent\":\"Sdaadsdsasd\",\n    \"previewTitle\":\"previewTitle\",\n    \"description\": \"description\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/post",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy blog theo categoryId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/post/category/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post",
+								"category",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chỉnh sửa blog",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Blog title updated\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/api/post/5",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Xóa blog theo id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/post/14",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post",
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy toàn bộ blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/post/list?page_index=1&page_size=10",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post",
+								"list"
+							],
+							"query": [
+								{
+									"key": "page_index",
+									"value": "1"
+								},
+								{
+									"key": "page_size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lấy chi tiết",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/post/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"post",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Tất cả order",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/order/products",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"order",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tạo mới order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\":10,\n    \"receiverFullName\":\"ha\",\n    \"email\":\"email\",\n    \"phoneNumber\":\"phone\",\n    \"addressDetail\":\"addressDetail\",\n    \"note\":\"ok\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/order/product/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"order",
+								"product",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJleHAiOjE2OTk1NTcxNzQsImlhdCI6MTY5Njk2NTE3NH0.5S4stLqjyHD29NrkrQazPgvNnPNjJ4H4Q8DaeYWs64j1xjHZk9XUbtan6bFW9IOBP34obBQ9O7CDhEvkymrnkQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/api/order/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"order",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

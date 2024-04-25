@@ -1,0 +1,60 @@
+Configuration:
+  status: warn
+  Appenders:
+    Console:
+      name: CONSOLE
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}.%M(%L) - %msg%n'
+    RollingRandomAccessFile:
+      - name: INFO
+        fileName: log/enterprise-project.log
+        filePattern: log/$${date:yyyy-MM}/%d{yyyy-MM-dd}-enterprise-project-%i.log.gz
+        PatternLayout:
+          pattern: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}.%M(%L) - %msg%n'
+        Policies:
+          TimeBasedTriggeringPolicy: {
+          }
+          OnStartupTriggeringPolicy: {
+          }
+          SizeBasedTriggeringPolicy:
+            size: 200 MB
+      - name: ERROR
+        fileName: log/enterprise-project-error.log
+        filePattern: log/$${date:yyyy-MM}/%d{yyyy-MM-dd}-enterprise-project-error-%i.log.gz
+        PatternLayout:
+          pattern: '%d{yyyy/MM/dd HH:mm:ss.SSS} %-5level - [%t] %c{1}:%L - %m%n'
+        Policies:
+          TimeBasedTriggeringPolicy: {
+          }
+      - name: JSON
+        fileName: log/enterprise-project.json
+        filePattern: log/$${date:yyyy-MM}/%d{yyyy-MM-dd}-enterprise-project-%i.json.gz
+        JSONLayout:
+          stacktraceAsString: true
+          compact: true
+          eventEol: true
+        Policies:
+          TimeBasedTriggeringPolicy: {
+          }
+          OnStartupTriggeringPolicy: {
+          }
+          SizeBasedTriggeringPolicy:
+            size: 200 MB
+  Loggers:
+    Logger:
+      - name: EventLogger
+        level: info
+        additivity: false
+        AppenderRef:
+          - ref: ERROR
+          - ref: INFO
+          - ref: JSON
+    Root:
+      level: info
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ERROR
+          level: error
+        - ref: INFO
+        - ref: JSON
