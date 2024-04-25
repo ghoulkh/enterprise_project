@@ -9,6 +9,7 @@ import com.enterprise.backend.service.base.BaseService;
 import com.enterprise.backend.service.repository.CategoryRepository;
 import com.enterprise.backend.service.transfomer.CategoryTransformer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +37,16 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
         }
     }
 
+    private void validatePriority(CategoryRequest categoryRequest) {
+        if (repo.countByPriority(categoryRequest.getPriority()) > 0) {
+            throw new EnterpriseBackendException(ErrorCode.CONFLICT_PRIORITY);
+        }
+    }
+
     @Transactional
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         validateName(categoryRequest);
+        validatePriority(categoryRequest);
         Category category = transformer.toEntity(categoryRequest);
         return transformer.toResponse(repo.save(category));
     }
@@ -49,6 +57,14 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
 
         if (!(category.getName().equals(categoryRequest.getName()))) {
             validateName(categoryRequest);
+        }
+
+        if (!(category.getPriority().equals(categoryRequest.getPriority()))
+                && ObjectUtils.isNotEmpty(categoryRequest.getPriority())) {
+            repo.findByPriority(categoryRequest.getPriority()).ifPresent(categoryReplace -> {
+                categoryReplace.setPriority(category.getPriority());
+                repo.save(categoryReplace);
+            });
         }
 
         BeanUtils.copyProperties(categoryRequest, category);

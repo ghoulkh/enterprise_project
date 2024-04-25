@@ -39,7 +39,7 @@ public class CategoryController {
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
     public ResponseEntity<CategoryResponse> updateProduct(@RequestBody CategoryRequest request,
-                                                         @PathVariable Long categoryId) {
+                                                          @PathVariable Long categoryId) {
         return ResponseEntity.ok(categoryService.updateCategory(request, categoryId));
     }
 

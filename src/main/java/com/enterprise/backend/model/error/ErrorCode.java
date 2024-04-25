@@ -22,6 +22,7 @@ public enum ErrorCode {
     PRODUCT_CONFLICT(CONFLICT.code, "Product name or title is existed!", HttpStatus.CONFLICT),
     CATEGORY_CONFLICT(CONFLICT.code, "Category name is existed!", HttpStatus.CONFLICT),
     CONFLICT_EMAIL(CONFLICT.code, "Trùng Emai!", HttpStatus.CONFLICT),
+    CONFLICT_PRIORITY(CONFLICT.code, "Category priority is existed!", HttpStatus.CONFLICT),
     CONFLICT_PHONE(CONFLICT.code, "Trùng số điện thoại!", HttpStatus.CONFLICT),
     ORDER_NOT_FOUND(NOT_FOUND.code, "order not found!", HttpStatus.NOT_FOUND),
     INVALID_ORDER(BAD_REQUEST.code, "Số thứ tự trong khoảng thừ 1 đến 6", HttpStatus.BAD_REQUEST),
