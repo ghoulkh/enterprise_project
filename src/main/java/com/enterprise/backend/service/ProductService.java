@@ -1,24 +1,21 @@
 package com.enterprise.backend.service;
 
 import com.enterprise.backend.exception.EnterpriseBackendException;
-import com.enterprise.backend.model.entity.Auditable;
-import com.enterprise.backend.model.entity.Category;
-import com.enterprise.backend.model.entity.Product;
-import com.enterprise.backend.model.entity.QProduct;
+import com.enterprise.backend.model.entity.*;
+import com.enterprise.backend.model.enums.OrderStatus;
 import com.enterprise.backend.model.error.ErrorCode;
+import com.enterprise.backend.model.request.ProductOrderRequest;
 import com.enterprise.backend.model.request.ProductRequest;
 import com.enterprise.backend.model.request.SearchProductRequest;
 import com.enterprise.backend.model.response.ProductResponse;
+import com.enterprise.backend.security.SecurityUtil;
 import com.enterprise.backend.service.base.BaseService;
-import com.enterprise.backend.service.repository.CategoryRepository;
-import com.enterprise.backend.service.repository.ProductRepository;
+import com.enterprise.backend.service.repository.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.enterprise.backend.service.transfomer.ProductOrderTransformer;
 import com.enterprise.backend.service.transfomer.ProductTransformer;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -38,26 +35,38 @@ import javax.transaction.Transactional;
 @Service
 @Slf4j
 public class ProductService extends BaseService<Product, Long, ProductRepository, ProductTransformer, ProductRequest, ProductResponse> {
-    private final ProductTransformer productTransformer;
 
     private static final QProduct qProduct = QProduct.product;
     private static final Map<String, ComparableExpressionBase<?>> sortProperties = new HashMap<>();
 
+    private final EmailService emailService;
     private final CategoryRepository categoryRepository;
+    private final OrderRepository orderRepository;
+    private final ProductOrderRepository productOrderRepository;
+    private final ProductOrderTransformer productOrderTransformer;
+    private final UserRepository userRepository;
 
     protected ProductService(ProductRepository repo,
                              ProductTransformer transformer,
                              EntityManager em,
+                             EmailService emailService,
+                             ProductOrderTransformer productOrderTransformer,
                              CategoryRepository categoryRepository,
-                             ProductTransformer productTransformer) {
+                             OrderRepository orderRepository,
+                             ProductOrderRepository productOrderRepository,
+                             UserRepository userRepository) {
         super(repo, transformer, em);
+        this.emailService = emailService;
+        this.productOrderTransformer = productOrderTransformer;
         this.categoryRepository = categoryRepository;
+        this.orderRepository = orderRepository;
+        this.productOrderRepository = productOrderRepository;
+        this.userRepository = userRepository;
         sortProperties.put(Product.Fields.id, qProduct.id);
         sortProperties.put(Product.Fields.price, qProduct.price);
         sortProperties.put(Product.Fields.rate, qProduct.rate);
         sortProperties.put(Auditable.Fields.createdDate, qProduct.createdDate);
         sortProperties.put(Auditable.Fields.updatedDate, qProduct.updatedDate);
-        this.productTransformer = productTransformer;
     }
 
     private void validateNameAndTitle(ProductRequest productRequest) {
@@ -109,7 +118,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
 
         List<ProductResponse> responses = search.fetch()
                 .stream()
-                .map(productTransformer::toResponse)
+                .map(transformer::toResponse)
                 .collect(Collectors.toList());
         return new PageImpl<>(responses, of, responses.size());
     }
@@ -117,7 +126,11 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     private JPAQuery<Product> searchQuery(SearchProductRequest searchRequest) {
         JPAQuery<Product> query = queryFactory.selectFrom(qProduct);
 
-        queryPage(searchRequest, query);
+        if (ObjectUtils.isNotEmpty(searchRequest.getCategoryId())) {
+            QCategory qCategory = QCategory.category;
+            query.innerJoin(qProduct.categories, qCategory)
+                    .where(qCategory.id.eq(searchRequest.getCategoryId()));
+        }
 
         if (ObjectUtils.isNotEmpty(searchRequest.getProductId())) {
             query.where(qProduct.id.eq(searchRequest.getProductId()));
@@ -144,8 +157,48 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
             query.where(qProduct.createdDate.loe(searchRequest.getToCreatedDate()));
         }
 
+        if (searchRequest.getFromModifiedDate() != null) {
+            query.where(qProduct.updatedDate.goe(searchRequest.getFromModifiedDate()));
+        }
+
+        if (searchRequest.getToModifiedDate() != null) {
+            query.where(qProduct.updatedDate.loe(searchRequest.getToModifiedDate()));
+        }
+
+        queryPage(searchRequest, query);
         sortBy(searchRequest.getOrderBy(), searchRequest.getIsDesc(), query, sortProperties);
         return query;
+    }
+
+    @Transactional
+    public void orderProduct(ProductOrderRequest request) {
+        Set<Orders> orders = new HashSet<>();
+        request.getProducts().forEach(orderRequest -> {
+            Product product = getOrElseThrow(orderRequest.getProductId());
+            Orders order = Orders.builder()
+                    .product(product)
+                    .quantity(orderRequest.getQuantity())
+                    .build();
+            orders.add(orderRepository.save(order));
+        });
+        ProductOrder productOrder = productOrderTransformer.toEntity(request);
+        String userId = SecurityUtil.getCurrentUsername();
+        if (StringUtils.isEmpty(userId)) {
+            userId = request.getUserId();
+        }
+        if (StringUtils.isNotEmpty(userId)) {
+            userRepository.findById(userId).ifPresent(productOrder::setUser);
+        }
+        productOrder.setOrders(orders);
+        productOrderRepository.save(productOrder);
+        new Thread(() -> emailService.sendNewOrder(request.getHtmlContent(), request.getEmail())).start();
+    }
+
+    public void updateOrderStatus(Long productOrderId, OrderStatus status) {
+        ProductOrder productOrder = productOrderRepository.findById(productOrderId)
+                .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.ORDER_NOT_FOUND));
+        productOrderRepository.updateProductOrderByStatus(productOrder.getId(), status);
+
     }
 
     private void executeCategory(ProductRequest productRequest, Product product) {

@@ -52,16 +52,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/login",
+                .antMatchers(HttpMethod.POST,
+                        "/auth/login",
                         "/user",
+                        "/user/review",
+                        "/product/order",
                         "/auth/change-password",
-                        "/auth/**",
+                        "/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET,
+                        "/category/**",
                         "/product/search",
-                        "/category/parent-id/*",
-                        "/order/product/*",
-                        "/uploader",
-                        "/order/products").permitAll()
-                .antMatchers(HttpMethod.GET, "/**").permitAll()
+                        "/product/review/**",
+                        "/product/get-by-id/**").permitAll()
                 .antMatchers("/user/login", "/test/*", "/ws/*", "/ws", "/ws/**").permitAll()
                 .anyRequest().authenticated()
                 .and().apply(securityConfigurerAdapter())

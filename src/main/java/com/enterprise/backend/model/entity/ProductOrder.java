@@ -1,9 +1,7 @@
 package com.enterprise.backend.model.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.enterprise.backend.model.enums.OrderStatus;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,6 +10,9 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductOrder extends AuditableAware implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +23,19 @@ public class ProductOrder extends AuditableAware implements Serializable {
     @ToString.Exclude
     private Set<Orders> orders;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private Integer quantity;
     private String receiverFullName;
     private String email;
     private String phoneNumber;
     private String addressDetail;
     private String note;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status = OrderStatus.NEW;
 }

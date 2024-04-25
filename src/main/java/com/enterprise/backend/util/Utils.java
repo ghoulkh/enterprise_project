@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.beanutils.BeanUtilsBean;
 
 import java.text.Normalizer;
+import java.util.List;
 
 @Log4j2
 @UtilityClass
@@ -49,5 +50,13 @@ public class Utils {
         }
 
         return sb.toString();
+    }
+
+    public Double tbc(List<Integer> numbers) {
+        double i = 0;
+        for (Integer number : numbers) {
+            i += Double.valueOf(number);
+        }
+        return i/numbers.size();
     }
 }

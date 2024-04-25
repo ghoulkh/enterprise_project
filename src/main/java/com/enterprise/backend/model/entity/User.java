@@ -41,6 +41,11 @@ public class User extends Auditable implements Serializable {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    private Set<ProductOrder> productOrders;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private Set<Authority> authorities;
 
     @EqualsAndHashCode.Exclude

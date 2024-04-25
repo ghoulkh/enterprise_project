@@ -44,7 +44,7 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
     }
 
     @Transactional
-    public CategoryResponse updateProduct(CategoryRequest categoryRequest, Long id) {
+    public CategoryResponse updateCategory(CategoryRequest categoryRequest, Long id) {
         Category category = getOrElseThrow(id);
 
         if (!(category.getName().equals(categoryRequest.getName()))) {
@@ -56,7 +56,7 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
     }
 
     @Transactional
-    public void deleteProduct(Long id) {
+    public void deleteCategory(Long id) {
         Category category = getOrElseThrow(id);
         repo.delete(category);
     }

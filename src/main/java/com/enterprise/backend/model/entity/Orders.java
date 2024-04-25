@@ -1,9 +1,6 @@
 package com.enterprise.backend.model.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,6 +8,9 @@ import java.io.Serializable;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Orders extends AuditableAware implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
