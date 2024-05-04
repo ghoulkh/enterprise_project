@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,5 +24,5 @@ public class CodeForgotPass implements Serializable {
     private User user;
 
     private String code;
-    private Long expireDate;
+    private LocalDateTime expireDate;
 }

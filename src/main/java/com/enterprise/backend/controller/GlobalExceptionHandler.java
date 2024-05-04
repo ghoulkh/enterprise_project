@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RestControllerAdvice
@@ -40,14 +44,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(ErrorCode.ACCESS_DENIED.httpStatus()).body(new ErrorResponse(ErrorCode.ACCESS_DENIED));
     }
 
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e) {
         String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
         log.info(message);
         ErrorResponse response = new ErrorResponse();
-        response.setCode("APP-002");
+        response.setCode(ErrorCode.BAD_REQUEST.code());
         response.setDescription(message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
@@ -58,6 +60,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCode.INTERNAL_SERVER));
     }
 
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<Object> parametersNotValid(BindException e) {
+        log.error(e.getMessage(), e);
+        var messageError = e.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+        var fieldError = e.getBindingResult().getFieldErrors();
+        if (!CollectionUtils.isEmpty(fieldError)) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.BAD_REQUEST, messageError.toString()));
+        }
+        return ResponseEntity.badRequest().body(new ErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage()));
+    }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     public ResponseEntity<ErrorResponse> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException e) {
@@ -67,7 +79,6 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ErrorCode.INVALID_USERNAME));
     }
-
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {

@@ -14,6 +14,11 @@ public class ErrorResponse {
         this.description = e.getDescription();
     }
 
+    public ErrorResponse(ErrorCode errorCode, String description) {
+        this.code = errorCode.code();
+        this.description = description;
+    }
+
     public ErrorResponse() {
     }
 

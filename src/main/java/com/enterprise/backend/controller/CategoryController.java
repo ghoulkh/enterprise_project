@@ -25,7 +25,7 @@ public class CategoryController {
 
     @PostMapping
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<CategoryResponse> createProduct(@RequestBody @Valid CategoryRequest request) {
         return ResponseEntity.ok(categoryService.createCategory(request));
     }
@@ -37,7 +37,7 @@ public class CategoryController {
 
     @PatchMapping("/{categoryId}")
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<CategoryResponse> updateProduct(@RequestBody CategoryRequest request,
                                                           @PathVariable Long categoryId) {
         return ResponseEntity.ok(categoryService.updateCategory(request, categoryId));
@@ -46,7 +46,7 @@ public class CategoryController {
     @DeleteMapping("/{categoryId}")
     @Transactional
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<String> deleteById(@PathVariable Long categoryId) {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.status(HttpStatus.OK).build();

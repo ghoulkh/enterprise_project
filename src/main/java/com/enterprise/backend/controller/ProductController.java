@@ -31,7 +31,7 @@ public class ProductController {
 
     @PostMapping
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<ProductResponse> createProduct(@RequestBody @Valid ProductRequest request) {
         return ResponseEntity.ok(productService.createProduct(request));
     }
@@ -43,7 +43,7 @@ public class ProductController {
 
     @PatchMapping("/{productId}")
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<ProductResponse> updateProduct(@RequestBody ProductRequest request,
                                                          @PathVariable Long productId) {
         return ResponseEntity.ok(productService.updateProduct(request, productId));
@@ -52,7 +52,7 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     @Transactional
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<String> deleteById(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.status(HttpStatus.OK).build();
@@ -80,13 +80,13 @@ public class ProductController {
 
     @GetMapping("/order/admin-search")
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
-    @ApiOperation(value = "", authorizations = {@Authorization(value = "Authorization")})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public Page<ProductOrderResponse> adminSearchProductOrder(@ModelAttribute SearchProductOrderRequest searchRequest) {
         return productOrderService.adminSearchProductOrder(searchRequest);
     }
 
     @GetMapping("/review/{productId}")
-    public Page<ReviewResponse> getProductOrderByMe(@ModelAttribute SearchRequest searchRequest,
+    public Page<ReviewResponse> getReviewByProduct(@ModelAttribute SearchRequest searchRequest,
                                                     @PathVariable Long productId) {
         return reviewService.getReviewByProduct(searchRequest, productId);
     }

@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @FieldNameConstants
-public class Product extends AuditableAware implements Serializable {
+public class Product extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
