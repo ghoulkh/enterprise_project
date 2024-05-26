@@ -8,7 +8,7 @@ import lombok.Setter;
 public class SearchProductRequest extends SearchRequest {
     private Long productId;
     private Long categoryId;
-    private String keyword;
+    private String title;
     private Long fromPrice;
     private Long toPrice;
 }

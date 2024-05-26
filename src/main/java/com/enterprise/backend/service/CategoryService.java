@@ -77,6 +77,11 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
         repo.delete(category);
     }
 
+    public CategoryResponse getCategoryById(Long categoryId) {
+        Category category = getOrElseThrow(categoryId);
+        return categoryTransformer.toResponse(category);
+    }
+
     public List<CategoryResponse> getAllSortByPriority() {
         return repo.findByOrderByPriorityAsc()
                 .stream()

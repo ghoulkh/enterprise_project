@@ -26,7 +26,7 @@ public class CategoryController {
     @PostMapping
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
-    public ResponseEntity<CategoryResponse> createProduct(@RequestBody @Valid CategoryRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@RequestBody @Valid CategoryRequest request) {
         return ResponseEntity.ok(categoryService.createCategory(request));
     }
 
@@ -35,11 +35,16 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllSortByPriority());
     }
 
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(categoryService.getCategoryById(categoryId));
+    }
+
     @PatchMapping("/{categoryId}")
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
-    public ResponseEntity<CategoryResponse> updateProduct(@RequestBody CategoryRequest request,
-                                                          @PathVariable Long categoryId) {
+    public ResponseEntity<CategoryResponse> updateCategory(@RequestBody CategoryRequest request,
+                                                           @PathVariable Long categoryId) {
         return ResponseEntity.ok(categoryService.updateCategory(request, categoryId));
     }
 

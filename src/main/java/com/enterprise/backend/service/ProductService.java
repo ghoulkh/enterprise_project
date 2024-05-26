@@ -70,7 +70,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     }
 
     private void validateNameAndTitle(ProductRequest productRequest) {
-        if (repo.countByNameOrTitle(productRequest.getName(), productRequest.getTitle()) > 0) {
+        if (repo.countByTitle(productRequest.getTitle()) > 0) {
             throw new EnterpriseBackendException(ErrorCode.PRODUCT_CONFLICT);
         }
     }
@@ -89,8 +89,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     public ProductResponse updateProduct(ProductRequest productRequest, Long id) {
         Product product = getOrElseThrow(id);
 
-        if (!(product.getName().equals(productRequest.getName())
-                && product.getTitle().equals(productRequest.getTitle()))) {
+        if (!product.getTitle().equals(productRequest.getTitle())) {
             validateNameAndTitle(productRequest);
         }
 
@@ -136,9 +135,8 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
             query.where(qProduct.id.eq(searchRequest.getProductId()));
         }
 
-        if (StringUtils.isNotEmpty(searchRequest.getKeyword())) {
-            query.where(qProduct.title.containsIgnoreCase(searchRequest.getKeyword())
-                    .or(qProduct.name.containsIgnoreCase(searchRequest.getKeyword())));
+        if (StringUtils.isNotEmpty(searchRequest.getTitle())) {
+            query.where(qProduct.title.containsIgnoreCase(searchRequest.getTitle()));
         }
 
         if (ObjectUtils.isNotEmpty(searchRequest.getFromPrice())) {

@@ -13,9 +13,6 @@ public class ProductRequest {
     @NotEmpty(message = "title is required!")
     private String title;
 
-    @NotEmpty(message = "name is required!")
-    private String name;
-
     @NotEmpty(message = "description is required!")
     private String description;
 

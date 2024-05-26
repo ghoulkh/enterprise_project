@@ -12,4 +12,5 @@ public class CategoryRequest {
 
     @Min(value = 0, message = "Thứ tự ưu tiên không thể âm!")
     private Integer priority;
+
 }

@@ -25,7 +25,6 @@ public interface ProductOrderTransformer extends BaseTransformer<ProductOrder, P
         entity.getOrders().forEach(order -> {
             ProductResponse product = new ProductResponse();
             product.setId(order.getProduct().getId());
-            product.setName(order.getProduct().getName());
             product.setDescription(order.getProduct().getDescription());
             product.setRate(order.getProduct().getRate());
             product.setTitle(order.getProduct().getTitle());

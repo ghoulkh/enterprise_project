@@ -24,7 +24,6 @@ public class Product extends Auditable implements Serializable {
     private Long id;
 
     private String title;
-    private String name;
 
     @Lob
     private String description;
