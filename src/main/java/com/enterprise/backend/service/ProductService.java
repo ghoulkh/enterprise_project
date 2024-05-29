@@ -12,6 +12,12 @@ import com.enterprise.backend.security.SecurityUtil;
 import com.enterprise.backend.service.base.BaseService;
 import com.enterprise.backend.service.repository.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,13 +29,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @Service
@@ -107,7 +122,24 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
 
     public ProductResponse getById(Long id) {
         Product product = getOrElseThrow(id);
-        return transformer.toResponse(product);
+        var result = transformer.toResponse(product);
+
+        List<ProductResponse.OfCategory> ofCategories = new ArrayList<>();
+        product.getCategories().forEach(category -> {
+            var ofCategory = new ProductResponse.OfCategory();
+            ofCategory.setId(category.getId());
+            ofCategory.setName(category.getName());
+            ofCategory.setPriority(category.getPriority());
+            ofCategories.add(ofCategory);
+        });
+
+        result.setOfCategories(ofCategories);
+        return result;
+    }
+
+    public List<ProductResponse> cacheListProducts(List<Long> productIds) {
+        var products = repo.findAllById(productIds);
+        return products.stream().map(transformer::toResponse).collect(Collectors.toList());
     }
 
     public Page<ProductResponse> search(SearchProductRequest searchProductRequest) {
@@ -207,6 +239,63 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
                 product.setCategories(new HashSet<>(categories));
             }
             categoryRepository.saveAll(categories);
+        }
+    }
+
+    public String uploadFiles(HttpServletRequest request,
+                              MultipartFile file,
+                              Long productId) {
+        if (file != null) {
+            try {
+                File imageDir = new File("./image");
+
+                if (file.getOriginalFilename() == null) {
+                    log.info("File originalName not found!");
+                }
+
+                if (!imageDir.exists()) {
+                    log.info("Create imageDir: {} - {}", file.getOriginalFilename(), imageDir.mkdirs());
+                }
+
+                String fileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
+                Path path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + productId + "_" + fileName);
+                int i = 0;
+                while (path.toFile().exists()) {
+                    path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + productId + "_" + i + "_" + fileName);
+                    i++;
+                }
+                Files.write(path, file.getBytes());
+
+                String domain = request.getScheme() + "://" + request.getServerName() + "/api/product";
+
+                return domain + "/images/" + path.getFileName();
+            } catch (IOException e) {
+                log.error("Error uploading file: {}", e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    public ResponseEntity<Resource> getFile(String fileName) {
+        try {
+            Path filePath = Paths.get("image").resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.valueOf(Files.probeContentType(filePath) != null ?
+                                Files.probeContentType(filePath) : "application/octet-stream"))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (MalformedURLException e) {
+            log.error("Error getting file: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (IOException e) {
+            log.error("Error determining file type: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

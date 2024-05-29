@@ -12,14 +12,18 @@ import com.enterprise.backend.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -63,6 +67,11 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getById(productId));
     }
 
+    @GetMapping("/cache-list-products")
+    public ResponseEntity<List<ProductResponse>> cacheListProducts(@RequestParam List<Long> productIds) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.cacheListProducts(productIds));
+    }
+
     @PostMapping("/order")
     public void order(@RequestBody @Valid ProductOrderRequest request) {
         productService.orderProduct(request);
@@ -87,8 +96,19 @@ public class ProductController {
 
     @GetMapping("/review/{productId}")
     public Page<ReviewResponse> getReviewByProduct(@ModelAttribute SearchRequest searchRequest,
-                                                    @PathVariable Long productId) {
+                                                   @PathVariable Long productId) {
         return reviewService.getReviewByProduct(searchRequest, productId);
     }
 
+    @PostMapping("/upload/{productId}")
+    @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
+    public String uploadFiles(HttpServletRequest request, MultipartFile file, @PathVariable Long productId) {
+        return productService.uploadFiles(request, file, productId);
+    }
+
+    @GetMapping("/images/{filename:.+}")
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        return productService.getFile(filename);
+    }
 }

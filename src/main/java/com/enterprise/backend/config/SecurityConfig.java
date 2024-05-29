@@ -62,6 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,
                         "/category/**",
                         "/product/search",
+                        "/product/cache-list-products",
+                        "/product/images/**",
                         "/product/review/**",
                         "/product/get-by-id/**").permitAll()
                 .antMatchers("/user/login", "/test/*", "/ws/*", "/ws", "/ws/**").permitAll()
@@ -85,6 +87,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/v2/api-docs",
                 "/configuration/ui",
                 "/resources/static/**",
+                "/images/**",
+                "/image/**",
+                "/resources/image/**",
                 "/swagger-resources/**",
                 "/configuration/security",
                 "/swagger-ui.html",

@@ -22,12 +22,12 @@ public class ProductOrderRequest {
 
     @NotNull(message = "products is required!")
     private List<@Valid OrderRequest> products;
-    @NotNull(message = "products is required!")
+    @NotNull(message = "htmlContent is required!")
     private String htmlContent;
 
     @Data
     public static class OrderRequest {
-        @NotEmpty(message = "productId is required!")
+        @NotNull(message = "productId is required!")
         private Long productId;
         @NotNull(message = "quantity is required!")
         private Integer quantity;

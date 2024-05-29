@@ -16,4 +16,12 @@ public class ProductResponse {
     private String updatedBy;
     private String createdDate;
     private String updatedDate;
+    private List<OfCategory> ofCategories;
+
+    @Data
+    public static class OfCategory {
+        private Long id;
+        private String name;
+        private Integer priority;
+    }
 }

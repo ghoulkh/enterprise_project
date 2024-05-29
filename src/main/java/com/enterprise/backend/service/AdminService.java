@@ -54,10 +54,25 @@ public class AdminService {
     public void addAuthorityWithUsername(String username, Authority.Role role) {
         User userToAdd = userRepository.findById(username).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
+
+        if (Authority.Role.ROLE_USER.equals(role)) {
+            deleteAdminWithUsername(username);
+            return;
+        }
+
         Authority authority = new Authority();
         authority.setRole(role);
         authority.setUser(userToAdd);
         authorityRepository.save(authority);
+    }
+    public void deleteAdminWithUsername(String username) {
+        var user = userRepository.findById(username).orElseThrow(() ->
+                new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
+
+        var authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_ADMIN).orElseThrow(() ->
+                new EnterpriseBackendException(ErrorCode.ROLE_NOT_FOUND));
+
+        authorityRepository.delete(authority);
     }
 
     public UserResponse banUser(String username) {

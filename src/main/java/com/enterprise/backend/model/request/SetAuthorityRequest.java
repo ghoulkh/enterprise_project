@@ -10,6 +10,6 @@ public class SetAuthorityRequest {
     @NotBlank(message = "username is required!")
     private String username;
     @NotBlank(message = "username is required!")
-    @Pattern(regexp = "^(ROLE_ADMIN)$", message = "role value is ROLE_ADMIN")
+    @Pattern(regexp = "^(ROLE_ADMIN|ROLE_USER)$", message = "role value is ROLE_ADMIN or ROLE_USER")
     private String role;
 }
