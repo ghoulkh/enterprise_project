@@ -100,11 +100,11 @@ public class ProductController {
         return reviewService.getReviewByProduct(searchRequest, productId);
     }
 
-    @PostMapping("/upload/{productId}")
+    @PostMapping("/upload")
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
-    public String uploadFiles(HttpServletRequest request, MultipartFile file, @PathVariable Long productId) {
-        return productService.uploadFiles(request, file, productId);
+    public String uploadFiles(HttpServletRequest request, MultipartFile file) {
+        return productService.uploadFiles(request, file);
     }
 
     @GetMapping("/images/{filename:.+}")

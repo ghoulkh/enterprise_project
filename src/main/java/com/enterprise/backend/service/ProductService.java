@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
@@ -243,8 +242,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     }
 
     public String uploadFiles(HttpServletRequest request,
-                              MultipartFile file,
-                              Long productId) {
+                              MultipartFile file) {
         if (file != null) {
             try {
                 File imageDir = new File("./image");
@@ -258,10 +256,10 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
                 }
 
                 String fileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
-                Path path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + productId + "_" + fileName);
+                Path path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + fileName);
                 int i = 0;
                 while (path.toFile().exists()) {
-                    path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + productId + "_" + i + "_" + fileName);
+                    path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + i + "_" + fileName);
                     i++;
                 }
                 Files.write(path, file.getBytes());
