@@ -1,6 +1,7 @@
 package com.enterprise.backend.model.entity;
 
 import com.enterprise.backend.model.enums.OrderStatus;
+import com.enterprise.backend.model.enums.OrderTypeStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ public class ProductOrder extends Auditable implements Serializable {
     private User user;
 
     private Integer quantity;
+    private Long price;
     private String receiverFullName;
     private String email;
     private String phoneNumber;
@@ -38,4 +40,7 @@ public class ProductOrder extends Auditable implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
+
+    @Enumerated(EnumType.STRING)
+    private OrderTypeStatus type;
 }

@@ -12,7 +12,10 @@ public class ProductOrderResponse {
     private String phoneNumber;
     private String addressDetail;
     private String note;
+    private Integer quantity;
+    private Long price;
     private String status;
+    private String type;
     private Set<OrderResponse> orders;
 
     @Data

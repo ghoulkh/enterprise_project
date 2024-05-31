@@ -12,6 +12,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(NOT_FOUND.code, "Không tìm thấy người dùng!", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(NOT_FOUND.code, "Không tìm thấy role của user!", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME(BAD_REQUEST.code, "Sai username", HttpStatus.BAD_REQUEST),
+    QUANTITY_WRONG(BAD_REQUEST.code, "Vượt quá số lượng trong kho!", HttpStatus.BAD_REQUEST),
     BANNED_PERFORM_ACTION(UNAUTHORIZED.code, "Banded perform action!", HttpStatus.UNAUTHORIZED),
     POST_NOT_FOUND(NOT_FOUND.code, "Không tìm thấy bài viết!", HttpStatus.NOT_FOUND),
     CONFLICT_USERNAME(CONFLICT.code, "Conflict username!", HttpStatus.CONFLICT),

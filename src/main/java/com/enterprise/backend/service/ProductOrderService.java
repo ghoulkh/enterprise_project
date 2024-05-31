@@ -2,6 +2,7 @@ package com.enterprise.backend.service;
 
 import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.entity.*;
+import com.enterprise.backend.model.enums.OrderTypeStatus;
 import com.enterprise.backend.model.error.ErrorCode;
 import com.enterprise.backend.model.request.ProductOrderRequest;
 import com.enterprise.backend.model.request.SearchProductOrderRequest;
@@ -102,6 +103,10 @@ public class ProductOrderService extends BaseService<ProductOrder, Long, Product
 
         if (ObjectUtils.isNotEmpty(searchRequest.getStatus())) {
             query.where(qProductOrder.status.eq(searchRequest.getStatus()));
+        }
+
+        if (ObjectUtils.isNotEmpty(searchRequest.getType())) {
+            query.where(qProductOrder.type.eq(searchRequest.getType()));
         }
 
         if (searchRequest.getToCreatedDate() != null) {

@@ -2,6 +2,7 @@ package com.enterprise.backend.controller;
 
 import com.enterprise.backend.auth.AuthoritiesConstants;
 import com.enterprise.backend.model.enums.OrderStatus;
+import com.enterprise.backend.model.enums.OrderTypeStatus;
 import com.enterprise.backend.model.request.*;
 import com.enterprise.backend.model.response.ProductOrderResponse;
 import com.enterprise.backend.model.response.ProductResponse;
@@ -77,6 +78,12 @@ public class ProductController {
         productService.orderProduct(request);
     }
 
+    @PostMapping("/favorite/{productId}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
+    public void addFavoriteProduct(@PathVariable Long productId) {
+        productService.addFavoriteProduct(productId);
+    }
+
     @PatchMapping("/order/{productOrderId}:{status}")
     public void updateOrderStatus(@PathVariable Long productOrderId, @PathVariable OrderStatus status) {
         productService.updateOrderStatus(productOrderId, status);
@@ -94,8 +101,15 @@ public class ProductController {
         return productOrderService.adminSearchProductOrder(searchRequest);
     }
 
+    @GetMapping("/order/favorite-search")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
+    public Page<ProductOrderResponse> favoriteSearchProductOrder(@ModelAttribute SearchProductOrderRequest searchRequest) {
+        searchRequest.setType(OrderTypeStatus.FAVORITE);
+        return productOrderService.adminSearchProductOrder(searchRequest);
+    }
+
     @GetMapping("/review/{productId}")
-    public Page<ReviewResponse> getReviewByProduct(@ModelAttribute SearchRequest searchRequest,
+    public Page<ReviewResponse> getReviewByProduct(@ModelAttribute SearchReviewRequest searchRequest,
                                                    @PathVariable Long productId) {
         return reviewService.getReviewByProduct(searchRequest, productId);
     }

@@ -1,6 +1,7 @@
 package com.enterprise.backend.model.request;
 
 import com.enterprise.backend.model.enums.OrderStatus;
+import com.enterprise.backend.model.enums.OrderTypeStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +15,5 @@ public class SearchProductOrderRequest extends SearchRequest {
     private String phoneNumber;
     private String addressDetail;
     private OrderStatus status;
+    private OrderTypeStatus type;
 }

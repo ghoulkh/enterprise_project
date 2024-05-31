@@ -3,6 +3,7 @@ package com.enterprise.backend.service;
 import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.entity.*;
 import com.enterprise.backend.model.enums.OrderStatus;
+import com.enterprise.backend.model.enums.OrderTypeStatus;
 import com.enterprise.backend.model.error.ErrorCode;
 import com.enterprise.backend.model.request.ProductOrderRequest;
 import com.enterprise.backend.model.request.ProductRequest;
@@ -19,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.enterprise.backend.service.transfomer.ProductOrderTransformer;
@@ -202,15 +204,31 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     @Transactional
     public void orderProduct(ProductOrderRequest request) {
         Set<Orders> orders = new HashSet<>();
+        AtomicReference<Integer> quantity = new AtomicReference<>(0);
+        AtomicReference<Long> price = new AtomicReference<>(0L);
+
         request.getProducts().forEach(orderRequest -> {
             Product product = getOrElseThrow(orderRequest.getProductId());
+            if (product.getQuantity() < orderRequest.getQuantity()) {
+                throw new EnterpriseBackendException(ErrorCode.QUANTITY_WRONG);
+            }
+            product.setQuantity(product.getQuantity() - orderRequest.getQuantity());
+            repo.save(product);
+
             Orders order = Orders.builder()
                     .product(product)
                     .quantity(orderRequest.getQuantity())
                     .build();
             orders.add(orderRepository.save(order));
+            quantity.updateAndGet(v -> v + orderRequest.getQuantity());
+            price.updateAndGet(v -> v + (orderRequest.getQuantity() * product.getPrice()));
         });
         ProductOrder productOrder = productOrderTransformer.toEntity(request);
+        productOrder.setQuantity(quantity.get());
+        productOrder.setPrice(price.get());
+        productOrder.setStatus(OrderStatus.NEW);
+        productOrder.setType(OrderTypeStatus.BUY);
+
         String userId = SecurityUtil.getCurrentUsername();
         if (StringUtils.isEmpty(userId)) {
             userId = request.getUserId();
@@ -220,12 +238,67 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
         }
         productOrder.setOrders(orders);
         productOrderRepository.save(productOrder);
+
+        orders.forEach(order -> {
+            order.setProductOrder(productOrder);
+            orderRepository.save(order);
+        });
+
         new Thread(() -> emailService.sendNewOrder(request.getHtmlContent(), request.getEmail())).start();
     }
 
+    @Transactional
+    public void addFavoriteProduct(Long productId) {
+        String userId = SecurityUtil.getCurrentUsername();
+        if (StringUtils.isEmpty(userId)) {
+            throw new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND);
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
+
+        Product product = getOrElseThrow(productId);
+
+        Orders order = Orders.builder()
+                .product(product)
+                .build();
+
+        Set<Orders> orders = new HashSet<>();
+        orders.add(orderRepository.save(order));
+        ProductOrder productOrder = ProductOrder.builder()
+                .orders(orders)
+                .email(user.getEmail())
+                .note("Favorite product!")
+                .type(OrderTypeStatus.FAVORITE)
+                .addressDetail(user.getAddress())
+                .phoneNumber(user.getPhone())
+                .receiverFullName(user.getFullName())
+                .user(user)
+                .build();
+
+        productOrderRepository.save(productOrder);
+
+        order.setProductOrder(productOrder);
+        orderRepository.save(order);
+    }
+
+    @Transactional
     public void updateOrderStatus(Long productOrderId, OrderStatus status) {
         ProductOrder productOrder = productOrderRepository.findById(productOrderId)
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.ORDER_NOT_FOUND));
+        switch (status) {
+            case CANCELLED:
+                productOrder.getOrders().forEach(order -> {
+                    var product = order.getProduct();
+                    product.setQuantity(product.getQuantity() + order.getQuantity());
+                    repo.save(product);
+                });
+                break;
+            case NEW:
+            case PENDING:
+            case COMPLETED:
+            default:
+                break;
+        }
         productOrderRepository.updateProductOrderByStatus(productOrder.getId(), status);
 
     }
