@@ -13,7 +13,7 @@ public class UserRequest {
     @NotBlank(message = "fullName is required!")
     private String fullName;
 
-    @Pattern(regexp = "^[\\w.-]+@[\\w-]+(\\.[\\w-]{2,4}){1,2}$", message = "invalid email!")
+    @Pattern(regexp = "^[\\w.-]+@[\\w-]+(\\.[\\w-]{2,4}){1,4}$", message = "invalid email!")
     @NotBlank(message = "email is required!")
     private String email;
 
