@@ -320,15 +320,17 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
             try {
                 File imageDir = new File("./image");
 
-                if (file.getOriginalFilename() == null) {
+                String originalFilename = file.getOriginalFilename();
+                if (originalFilename == null) {
                     log.info("File originalName not found!");
+                    return null;
                 }
 
                 if (!imageDir.exists()) {
                     log.info("Create imageDir: {} - {}", file.getOriginalFilename(), imageDir.mkdirs());
                 }
 
-                String fileName = org.springframework.util.StringUtils.cleanPath(file.getOriginalFilename());
+                String fileName = org.springframework.util.StringUtils.cleanPath(originalFilename);
                 Path path = Paths.get(imageDir.getAbsolutePath() + File.separator + "product_" + fileName);
                 int i = 0;
                 while (path.toFile().exists()) {

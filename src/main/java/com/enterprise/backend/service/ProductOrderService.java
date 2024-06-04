@@ -2,14 +2,14 @@ package com.enterprise.backend.service;
 
 import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.entity.*;
-import com.enterprise.backend.model.enums.OrderTypeStatus;
 import com.enterprise.backend.model.error.ErrorCode;
 import com.enterprise.backend.model.request.ProductOrderRequest;
 import com.enterprise.backend.model.request.SearchProductOrderRequest;
 import com.enterprise.backend.model.response.ProductOrderResponse;
 import com.enterprise.backend.security.SecurityUtil;
 import com.enterprise.backend.service.base.BaseService;
-import com.enterprise.backend.service.repository.*;
+import com.enterprise.backend.service.repository.ProductOrderRepository;
+import com.enterprise.backend.service.repository.UserRepository;
 import com.enterprise.backend.service.transfomer.ProductOrderTransformer;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -22,7 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
 public class ProductOrderService extends BaseService<ProductOrder, Long, ProductOrderRepository, ProductOrderTransformer, ProductOrderRequest, ProductOrderResponse> {
 
     private static final QProductOrder qProductOrder = QProductOrder.productOrder;
-    private static final Map<String, ComparableExpressionBase<?>> sortProperties = new HashMap<>();
+    private final Map<String, ComparableExpressionBase<?>> sortProperties = new HashMap<>();
 
     private final UserRepository userRepository;
 
@@ -53,36 +55,35 @@ public class ProductOrderService extends BaseService<ProductOrder, Long, Product
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
-        PageRequest of = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
-        JPAQuery<ProductOrder> search = searchQuery(searchRequest, user.getId());
-        log.info("searchProductOrder by me query: {}", search);
+        PageRequest pageRequest = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
+        JPAQuery<ProductOrder> search = createProductOrderQuery(searchRequest, user.getId());
+        log.info("Search product order by me query: {}", search);
 
         List<ProductOrderResponse> responses = search.fetch()
                 .stream()
                 .map(transformer::toResponse)
                 .collect(Collectors.toList());
-        return new PageImpl<>(responses, of, responses.size());
+        return new PageImpl<>(responses, pageRequest, responses.size());
     }
 
     public Page<ProductOrderResponse> adminSearchProductOrder(SearchProductOrderRequest searchRequest) {
-        PageRequest of = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
-        JPAQuery<ProductOrder> search = searchQuery(searchRequest, null);
-        log.info("admin searchProductOrder query: {}", search);
+        PageRequest pageRequest = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
+        JPAQuery<ProductOrder> search = createProductOrderQuery(searchRequest, null);
+        log.info("Admin search product order query: {}", search);
 
         List<ProductOrderResponse> responses = search.fetch()
                 .stream()
                 .map(transformer::toResponse)
                 .collect(Collectors.toList());
-        return new PageImpl<>(responses, of, responses.size());
+        return new PageImpl<>(responses, pageRequest, responses.size());
     }
 
-    private JPAQuery<ProductOrder> searchQuery(SearchProductOrderRequest searchRequest, String userId) {
+    private JPAQuery<ProductOrder> createProductOrderQuery(SearchProductOrderRequest searchRequest, String userId) {
         JPAQuery<ProductOrder> query = queryFactory.selectFrom(qProductOrder);
 
-        if (ObjectUtils.isNotEmpty(userId)) {
-            QUser qUser = QUser.user;
-            query.innerJoin(qProductOrder.user, qUser)
-                    .where(qUser.id.eq(userId));
+        if (StringUtils.isNotEmpty(userId)) {
+            query.innerJoin(qProductOrder.user, QUser.user)
+                    .where(QUser.user.id.eq(userId));
         }
 
         if (StringUtils.isNotEmpty(searchRequest.getPhoneNumber())) {

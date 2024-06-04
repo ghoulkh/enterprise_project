@@ -18,86 +18,56 @@ import javax.mail.internet.MimeMessage;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
+
     @Value("${app.admin.mail}")
     private String adminEmail;
+
     @Value("${app.front-end.domain}")
     private String domainFrontEnd;
 
-    private String messageForgotPasswordBuilder(String codeResetPassword) {
+    private String buildForgotPasswordMessage(String codeResetPassword) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Reset password\n" +
-                "Code will expire within 5 minutes\n").append("Code: ");
+        builder.append("Reset password\n")
+                .append("Code will expire within 5 minutes\n")
+                .append("Code: ");
         if (StringUtils.isNotEmpty(codeResetPassword)) {
             builder.append(codeResetPassword);
         }
         return builder.toString();
     }
 
-    private void sendSimpleMail(String codeResetPass, String email) {
+    private void sendMail(String content, String subject, String to, boolean isHtml) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, Constants.UTF_8);
-            helper.setText(messageForgotPasswordBuilder(codeResetPass), false); // Use this or above line.
-            helper.setTo(email);
-            helper.setSubject("Forgot password!!!");
+            helper.setText(content, isHtml);
+            helper.setTo(to);
+            helper.setSubject(subject);
             helper.setFrom(adminEmail);
             javaMailSender.send(mimeMessage);
-            log.info("Forgot Password Mail Sent Successfully...");
-        }
-
-        catch (Exception e) {
-            log.error("Error while Sending Forgot Password Mail: {}", e.getMessage(), e);
+            log.info("Mail sent successfully to {}", to);
+        } catch (Exception e) {
+            log.error("Error while sending mail to {}: {}", to, e.getMessage(), e);
         }
     }
 
     public void sendNewOrder(String htmlContent, String receiver) {
-        try {
+        String adminSubject = "Bạn có một đơn hàng mới";
+        new Thread(() -> sendMail(htmlContent, adminSubject, adminEmail, true));
 
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, Constants.UTF_8);
-            helper.setText(htmlContent, true); // Use this or above line.
-            helper.setTo(adminEmail);
-            helper.setSubject("Bạn có một đơn hàng mới");
-            helper.setFrom(adminEmail);
-            javaMailSender.send(mimeMessage);
-            log.info("Mail Admin New Order Sent Successfully...");
-        }
-
-        catch (Exception e) {
-            log.error("Error while Sending Mail Admin New Order: {}", e.getMessage(), e);
-        }
-        sendToReceiver(htmlContent, receiver);
-    }
-
-
-    private void sendToReceiver(String htmlContent, String receiverEmail) {
-
-        try {
-
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, Constants.UTF_8);
-            helper.setText(htmlContent, true); // Use this or above line.
-            helper.setTo(receiverEmail);
-            helper.setSubject("Bạn vừa đặt một đơn hàng mới tại " + domainFrontEnd);
-            helper.setFrom(adminEmail);
-            javaMailSender.send(mimeMessage);
-            log.info("Mail New Order Sent Successfully...");
-        }
-
-        catch (Exception e) {
-            log.error("Error while Sending Mail New Order: {} ", e.getMessage(), e);
-        }
+        String receiverSubject = "Bạn vừa đặt một đơn hàng mới tại " + domainFrontEnd;
+        new Thread(() -> sendMail(htmlContent, receiverSubject, receiver, true));
     }
 
     @Async
     public void sendMailForgotPassword(String codeResetPass, String email) {
-        sendSimpleMail(codeResetPass, email);
+        String subject = "Forgot password!!!";
+        String content = buildForgotPasswordMessage(codeResetPass);
+        sendMail(content, subject, email, false);
     }
 
     @Async
     public void sendMailNewOrder(String htmlContent, String receiver) {
         sendNewOrder(htmlContent, receiver);
     }
-
-
 }

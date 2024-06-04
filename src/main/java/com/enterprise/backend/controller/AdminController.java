@@ -9,6 +9,7 @@ import com.enterprise.backend.service.AdminService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -27,7 +28,7 @@ public class AdminController {
     @Secured(AuthoritiesConstants.ROLE_SUPER_ADMIN)
     @GetMapping("/users")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
-    public ResponseEntity<List<UserResponse>> getUsersAndPaging(@RequestParam(name = "page_index", required = false, defaultValue = "1") int pageIndex,
+    public ResponseEntity<Page<UserResponse>> getUsersAndPaging(@RequestParam(name = "page_index", required = false, defaultValue = "1") int pageIndex,
                                                                 @RequestParam(name = "page_size", required = false, defaultValue = "10") int pageSize,
                                                                 @RequestParam(name = "type", required = false) String type) {
         return ResponseEntity.ok(adminService.getByType(pageIndex, pageSize, type));

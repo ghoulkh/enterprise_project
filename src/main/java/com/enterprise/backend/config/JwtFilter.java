@@ -18,7 +18,9 @@ import java.io.IOException;
 
 @Log4j2
 public class JwtFilter extends GenericFilterBean {
+
     private final JwtToken jwtToken;
+
     public JwtFilter(JwtToken jwtToken) {
         this.jwtToken = jwtToken;
     }
@@ -28,6 +30,7 @@ public class JwtFilter extends GenericFilterBean {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
         final String requestTokenHeader = request.getHeader("Authorization");
 
         String username = null;
@@ -35,8 +38,9 @@ public class JwtFilter extends GenericFilterBean {
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtTokenString = requestTokenHeader.substring(7);
-            if (jwtTokenString.equals("null"))
+            if ("null".equals(jwtTokenString)) {
                 jwtTokenString = null;
+            }
             try {
                 username = this.jwtToken.getUsernameFromToken(jwtTokenString);
             } catch (IllegalArgumentException e) {
@@ -44,7 +48,7 @@ public class JwtFilter extends GenericFilterBean {
             } catch (ExpiredJwtException e) {
                 logger.error("JWT Token has expired");
             } catch (Exception e) {
-                logger.error("invalid token!");
+                logger.error("Invalid token");
             }
         } else {
             logger.warn("JWT Token does not begin with Bearer String");
@@ -53,25 +57,15 @@ public class JwtFilter extends GenericFilterBean {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.jwtToken.validateToken(jwtTokenString);
-//            try {
-//                userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
-//            } catch (BannedUserException e) {
-//                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//                response.getWriter().println(gson.toJson(new ErrorResponse(ErrorCode.BANNED_USER)));
-//                response.setStatus(HttpStatus.FORBIDDEN.value());
-//                response.getWriter().close();
-//                return;
-//            }
 
             if (userDetails != null) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

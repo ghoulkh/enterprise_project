@@ -32,7 +32,6 @@ public class AuthService {
     private final EmailService emailService;
     private final CodeForgotPassService codeForgotPassService;
 
-
     public void changePassword(ChangePasswordRequest request) {
         User userToChange = userService.getByUsernameOrEmailOrPhone(request.getUsername());
         authenticate(userToChange.getId(), request.getOldPassword());
@@ -43,8 +42,9 @@ public class AuthService {
     public String validateUsernamePasswordAndGenToken(LoginRequest loginRequest) {
         Authentication authentication = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         List<String> roles = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        return jwtToken.generateToken(((org.springframework.security.core.userdetails.User)authentication.getPrincipal()).getUsername(), roles);
+        return jwtToken.generateToken(((org.springframework.security.core.userdetails.User) authentication.getPrincipal()).getUsername(), roles);
     }
+
     private Authentication authenticate(String username, String password) {
         try {
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

@@ -56,7 +56,7 @@ public class JobService {
     }
 
     private void createImageFolder() {
-        File imageFolder = new File("src/main/resources/static/images");
+        File imageFolder = new File("./image");
         if (!imageFolder.exists()) {
             log.info("Create folder image done: {}", imageFolder.mkdir());
         }

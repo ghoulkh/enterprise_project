@@ -20,7 +20,6 @@ public class UserResponse {
     private String fullName;
     private String avaUrl;
     private String email;
-    private User.Provider provider;
     private String createdBy;
     private String phone;
     private Double ratingValue;

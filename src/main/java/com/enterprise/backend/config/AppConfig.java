@@ -15,9 +15,7 @@ public class AppConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        return objectMapper;
+        return new ObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
     }
 
     @Bean
@@ -25,12 +23,12 @@ public class AppConfig {
         return new SpringSecurityAuditorAware();
     }
 
-    @Bean
+    @Bean(name = "taskExecutor")
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(300);
-        executor.setMaxPoolSize(300);
-        executor.setQueueCapacity(300);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(20);
+        executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("EnterpriseExecutor-");
         executor.initialize();
         return executor;

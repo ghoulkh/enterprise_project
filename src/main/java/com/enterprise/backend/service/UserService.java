@@ -166,7 +166,7 @@ public class UserService extends BaseService<User, String, UserRepository, UserT
         List<Integer> rates = reviewRepository.findAllByProduct(product)
                 .stream().map(Review::getRate).collect(Collectors.toList());
         rates.add(request.getRate());
-        product.setRate(Utils.tbc(rates));
+        product.setRate(Utils.calculateAverage(rates));
         productRepository.save(product);
 
         review.setProduct(product);

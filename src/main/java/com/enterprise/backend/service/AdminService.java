@@ -20,66 +20,64 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
+
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
 
-    private List<User> getUserAndPaging(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
-        return userPage.getContent();
-    }
+    public Page<UserResponse> getByType(int pageIndex, int pageSize, String type) {
+        Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<User> userPage;
 
-    public List<UserResponse> getByType(int pageIndex, int pageSize, String type) {
-        List<User> users;
         if ("BANNED".equals(type)) {
-            Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-            users = userRepository.getAllByActive(false, paging);
+            userPage = userRepository.getAllByActive(false, paging);
         } else if ("USER".equals(type)) {
-            Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "created_date"));
-            users = userRepository.getAllByRole(paging);
+            userPage = userRepository.getAllByRole(paging);
         } else if (type != null) {
-            Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "created_date"));
-            users = userRepository.getAllByRole(type, paging);
+            userPage = userRepository.getAllByRole(type, paging);
         } else {
-            Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-            users = getUserAndPaging(paging);
+            userPage = userRepository.findAll(paging);
         }
-        return users.stream().map(UserResponse::from).collect(Collectors.toList());
+
+        return userPage.map(UserResponse::from);
     }
 
     public List<UserResponse> searchByEmailOrPhone(String keyword) {
         List<User> users = userRepository.searchByEmailOrPhone(keyword);
-        return users.stream().map(UserResponse::from).collect(Collectors.toList());
+        return users.stream()
+                .map(UserResponse::from)
+                .collect(Collectors.toList());
     }
 
     public void addAuthorityWithUsername(String username, Authority.Role role) {
-        User userToAdd = userRepository.findById(username).orElseThrow(() ->
+        User user = userRepository.findById(username).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
-        if (Authority.Role.ROLE_USER.equals(role)) {
+        if (role == Authority.Role.ROLE_USER) {
             deleteAdminWithUsername(username);
             return;
         }
 
         Authority authority = new Authority();
         authority.setRole(role);
-        authority.setUser(userToAdd);
+        authority.setUser(user);
         authorityRepository.save(authority);
     }
+
     public void deleteAdminWithUsername(String username) {
-        var user = userRepository.findById(username).orElseThrow(() ->
+        User user = userRepository.findById(username).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
-        var authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_ADMIN).orElseThrow(() ->
+        Authority authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_ADMIN).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.ROLE_NOT_FOUND));
 
         authorityRepository.delete(authority);
     }
 
     public UserResponse banUser(String username) {
-        User userToBan = userRepository.findById(username).orElseThrow(() ->
+        User user = userRepository.findById(username).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
-        userToBan.setActive(false);
-        return UserResponse.from(userRepository.save(userToBan));
-    }
 
+        user.setActive(false);
+        return UserResponse.from(userRepository.save(user));
+    }
 }
