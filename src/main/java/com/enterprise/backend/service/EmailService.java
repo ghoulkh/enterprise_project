@@ -1,6 +1,7 @@
 package com.enterprise.backend.service;
 
 import com.enterprise.backend.util.Constants;
+import com.enterprise.backend.util.HTMLTemplateReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,9 @@ public class EmailService {
 
     @Value("${app.admin.mail}")
     private String adminEmail;
+
+    @Value("${app.admin.phone}")
+    private String adminPhone;
 
     @Value("${app.front-end.domain}")
     private String domainFrontEnd;
@@ -60,10 +64,17 @@ public class EmailService {
     }
 
     @Async
-    public void sendMailForgotPassword(String codeResetPass, String email) {
-        String subject = "Forgot password!!!";
-        String content = buildForgotPasswordMessage(codeResetPass);
-        sendMail(content, subject, email, false);
+    public void sendMailForgotPassword(String codeResetPass, String email, String fullName) {
+        String filePath = "./src/main/resources/email/mailTemplate.html";
+        try {
+            String htmlTemplate = HTMLTemplateReader.readTemplate(filePath);
+            String htmlBody = htmlTemplate.replace("{{ fullName }}", fullName)
+                    .replace("{{ code }}", codeResetPass);
+            String subject = "Forgot password!!!";
+            sendMail(htmlBody, subject, email, true);
+        } catch (Exception e) {
+            log.error("Failed to send mail reset password: {}", e.getMessage(), e);
+        }
     }
 
     @Async

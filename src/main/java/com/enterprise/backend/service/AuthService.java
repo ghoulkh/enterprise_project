@@ -1,9 +1,9 @@
 package com.enterprise.backend.service;
 
 import com.enterprise.backend.config.JwtToken;
+import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.entity.CodeForgotPass;
 import com.enterprise.backend.model.entity.User;
-import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.error.ErrorCode;
 import com.enterprise.backend.model.request.ChangePasswordRequest;
 import com.enterprise.backend.model.request.LoginRequest;
@@ -58,7 +58,7 @@ public class AuthService {
     public void forgotPasswordByUsername(String username) {
         User user = userService.getByUsernameOrEmailOrPhone(username);
         CodeForgotPass codeForgotPass = codeForgotPassService.generateCode(user);
-        emailService.sendMailForgotPassword(codeForgotPass.getCode(), user.getEmail());
+        emailService.sendMailForgotPassword(codeForgotPass.getCode(), user.getEmail(), user.getFullName());
     }
 
     @Transactional
