@@ -48,7 +48,7 @@ public class JobService {
             request.setPassword(this.passwordAdmin);
             UserResponse userResponse = userService.registrationUser(request);
 
-            adminService.addAuthorityWithUsername(userResponse.getId(), Authority.Role.ROLE_SUPER_ADMIN);
+            adminService.addAuthorityWithUserId(userResponse.getId(), Authority.Role.ROLE_SUPER_ADMIN);
             log.info("Register admin done!");
         } catch (Exception e) {
             log.info("Đã tạo tài khoản admin");

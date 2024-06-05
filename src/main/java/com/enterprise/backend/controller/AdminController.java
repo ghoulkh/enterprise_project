@@ -46,7 +46,7 @@ public class AdminController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<List<UserResponse>> setAuthority(@RequestBody @Valid SetAuthorityRequest request) {
         Authority.Role role = Authority.Role.valueOf(request.getRole());
-        adminService.addAuthorityWithUsername(request.getUsername(), role);
+        adminService.addAuthorityWithUserId(request.getUsername(), role);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

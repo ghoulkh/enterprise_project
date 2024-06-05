@@ -1,8 +1,8 @@
 package com.enterprise.backend.service;
 
+import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.entity.Authority;
 import com.enterprise.backend.model.entity.User;
-import com.enterprise.backend.exception.EnterpriseBackendException;
 import com.enterprise.backend.model.error.ErrorCode;
 import com.enterprise.backend.model.response.UserResponse;
 import com.enterprise.backend.service.repository.AuthorityRepository;
@@ -48,12 +48,12 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public void addAuthorityWithUsername(String username, Authority.Role role) {
-        User user = userRepository.findById(username).orElseThrow(() ->
+    public void addAuthorityWithUserId(String userId, Authority.Role role) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
         if (role == Authority.Role.ROLE_USER) {
-            deleteAdminWithUsername(username);
+            deleteAdminWithUserId(userId);
             return;
         }
 
@@ -63,8 +63,8 @@ public class AdminService {
         authorityRepository.save(authority);
     }
 
-    public void deleteAdminWithUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() ->
+    public void deleteAdminWithUserId(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
         Authority authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_ADMIN).orElseThrow(() ->
@@ -73,8 +73,8 @@ public class AdminService {
         authorityRepository.delete(authority);
     }
 
-    public UserResponse banUser(String username) {
-        User user = userRepository.findById(username).orElseThrow(() ->
+    public UserResponse banUser(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
         user.setActive(false);
