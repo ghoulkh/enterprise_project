@@ -291,7 +291,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.ORDER_NOT_FOUND));
 
-        productOrderRepository.delete(productOrderRepository.findByUserAndOrders(user, Set.of(order))
+        productOrderRepository.delete(productOrderRepository.findByUserAndOrdersIn(user, Set.of(order))
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.PRODUCT_NOT_FOUND)));
         orderRepository.delete(order);
     }

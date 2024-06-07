@@ -20,5 +20,5 @@ public interface ProductOrderRepository extends BaseCommonRepository<ProductOrde
 
     Page<ProductOrder> findAllByUser(User user, Pageable pageable);
 
-    Optional<ProductOrder> findByUserAndOrders(User user, Set<Orders> orders);
+    Optional<ProductOrder> findByUserAndOrdersIn(User user, Set<Orders> orders);
 }
