@@ -84,6 +84,12 @@ public class ProductController {
         productService.addFavoriteProduct(productId);
     }
 
+    @DeleteMapping("/favorite/{orderId}")
+    @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
+    public void deleteFavoriteProduct(@PathVariable Long orderId) {
+        productService.deleteProduct(orderId);
+    }
+
     @PatchMapping("/order/{productOrderId}:{status}")
     public void updateOrderStatus(@PathVariable Long productOrderId, @PathVariable OrderStatus status) {
         productService.updateOrderStatus(productOrderId, status);

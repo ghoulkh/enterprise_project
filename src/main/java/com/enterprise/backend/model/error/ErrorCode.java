@@ -27,6 +27,7 @@ public enum ErrorCode {
     CONFLICT_PRIORITY(CONFLICT.code, "Category priority is existed!", HttpStatus.CONFLICT),
     CONFLICT_PHONE(CONFLICT.code, "Trùng số điện thoại!", HttpStatus.CONFLICT),
     ORDER_NOT_FOUND(NOT_FOUND.code, "order not found!", HttpStatus.NOT_FOUND),
+    PRODUCT_ORDER_NOT_FOUND(NOT_FOUND.code, "product order not found!", HttpStatus.NOT_FOUND),
     INVALID_ORDER(BAD_REQUEST.code, "Số thứ tự trong khoảng thừ 1 đến 6", HttpStatus.BAD_REQUEST),
     PRICE_INVALID(BAD_REQUEST.code, "Giá tiền không được âm!", HttpStatus.BAD_REQUEST),
     INVALID_DATE(BAD_REQUEST.code, "Invalid date. Date must be dd/mm/yyyy!", HttpStatus.BAD_REQUEST),
