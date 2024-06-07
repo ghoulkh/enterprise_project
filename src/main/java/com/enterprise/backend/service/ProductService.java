@@ -280,20 +280,19 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
     }
 
     @Transactional
-    public void deleteProductFavorite(Long orderId) {
+    public void deleteProductFavorite(Long productOrderId) {
         String userId = SecurityUtil.getCurrentUsername();
         if (StringUtils.isEmpty(userId)) {
             throw new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND);
         }
-        User user = userRepository.findById(userId)
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.ORDER_NOT_FOUND));
+        var productOrder = productOrderRepository.findByUserAndIdAndType(user, productOrderId, OrderTypeStatus.FAVORITE)
+                .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.PRODUCT_ORDER_NOT_FOUND));
 
-        productOrderRepository.delete(productOrderRepository.findByUserAndOrdersIn(user, Set.of(order))
-                .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.PRODUCT_NOT_FOUND)));
-        orderRepository.delete(order);
+        productOrder.setType(OrderTypeStatus.FAVORITE_HISTORY);
+        productOrderRepository.save(productOrder);
     }
 
     @Transactional

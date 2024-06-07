@@ -66,9 +66,9 @@ public class ProductOrderService extends BaseService<ProductOrder, Long, Product
         return new PageImpl<>(responses, pageRequest, responses.size());
     }
 
-    public Page<ProductOrderResponse> adminSearchProductOrder(SearchProductOrderRequest searchRequest) {
+    public Page<ProductOrderResponse> adminSearchProductOrder(SearchProductOrderRequest searchRequest, String userId) {
         PageRequest pageRequest = PageRequest.of(searchRequest.getPageNumber(), searchRequest.getPageSize());
-        JPAQuery<ProductOrder> search = createProductOrderQuery(searchRequest, null);
+        JPAQuery<ProductOrder> search = createProductOrderQuery(searchRequest, userId);
         log.info("Admin search product order query: {}", search);
 
         List<ProductOrderResponse> responses = search.fetch()

@@ -7,6 +7,7 @@ import com.enterprise.backend.model.request.*;
 import com.enterprise.backend.model.response.ProductOrderResponse;
 import com.enterprise.backend.model.response.ProductResponse;
 import com.enterprise.backend.model.response.ReviewResponse;
+import com.enterprise.backend.security.SecurityUtil;
 import com.enterprise.backend.service.ProductOrderService;
 import com.enterprise.backend.service.ProductService;
 import com.enterprise.backend.service.ReviewService;
@@ -84,10 +85,10 @@ public class ProductController {
         productService.addFavoriteProduct(productId);
     }
 
-    @DeleteMapping("/favorite/{orderId}")
+    @DeleteMapping("/favorite/{productOrderId}")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
-    public void deleteFavoriteProduct(@PathVariable Long orderId) {
-        productService.deleteProductFavorite(orderId);
+    public void deleteFavoriteProduct(@PathVariable Long productOrderId) {
+        productService.deleteProductFavorite(productOrderId);
     }
 
     @PatchMapping("/order/{productOrderId}:{status}")
@@ -104,14 +105,14 @@ public class ProductController {
     @Secured({AuthoritiesConstants.ROLE_ADMIN, AuthoritiesConstants.ROLE_SUPER_ADMIN})
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public Page<ProductOrderResponse> adminSearchProductOrder(@ModelAttribute SearchProductOrderRequest searchRequest) {
-        return productOrderService.adminSearchProductOrder(searchRequest);
+        return productOrderService.adminSearchProductOrder(searchRequest, null);
     }
 
     @GetMapping("/order/favorite-search")
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public Page<ProductOrderResponse> favoriteSearchProductOrder(@ModelAttribute SearchProductOrderRequest searchRequest) {
         searchRequest.setType(OrderTypeStatus.FAVORITE);
-        return productOrderService.adminSearchProductOrder(searchRequest);
+        return productOrderService.adminSearchProductOrder(searchRequest, SecurityUtil.getCurrentUsername());
     }
 
     @GetMapping("/review/{productId}")

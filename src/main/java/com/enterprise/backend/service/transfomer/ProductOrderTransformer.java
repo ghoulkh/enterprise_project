@@ -5,12 +5,11 @@ import com.enterprise.backend.model.request.ProductOrderRequest;
 import com.enterprise.backend.model.response.ProductOrderResponse;
 import com.enterprise.backend.model.response.ProductResponse;
 import com.enterprise.backend.service.base.BaseTransformer;
-
-import java.time.format.DateTimeFormatter;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +36,7 @@ public interface ProductOrderTransformer extends BaseTransformer<ProductOrder, P
             product.setUpdatedDate(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(order.getProduct().getUpdatedDate()));
 
             ProductOrderResponse.OrderResponse orderResponse = new ProductOrderResponse.OrderResponse();
+            orderResponse.setId(order.getId());
             orderResponse.setProduct(product);
             orderResponse.setQuantity(order.getQuantity());
             orders.add(orderResponse);

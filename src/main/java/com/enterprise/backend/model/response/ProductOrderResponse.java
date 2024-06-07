@@ -20,6 +20,7 @@ public class ProductOrderResponse {
 
     @Data
     public static class OrderResponse {
+        private Long id;
         private ProductResponse product;
         private Integer quantity;
     }
