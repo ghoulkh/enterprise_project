@@ -353,7 +353,9 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
                 }
                 Files.write(path, file.getBytes());
 
-                String domain = request.getScheme() + "://" + request.getServerName() + "/api/product";
+                String domain = request.getScheme() + "://" +
+                        (request.getServerName().contains("localhost") ? (request.getServerName() + ":" + request.getLocalPort()) : request.getServerName())
+                        + "/api/product";
 
                 return domain + "/images/" + path.getFileName();
             } catch (IOException e) {
