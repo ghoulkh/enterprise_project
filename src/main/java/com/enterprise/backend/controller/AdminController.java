@@ -30,8 +30,9 @@ public class AdminController {
     @ApiOperation(value = "", authorizations = {@Authorization(value = "Bearer")})
     public ResponseEntity<Page<UserResponse>> getUsersAndPaging(@RequestParam(name = "page_index", required = false, defaultValue = "1") int pageIndex,
                                                                 @RequestParam(name = "page_size", required = false, defaultValue = "10") int pageSize,
+                                                                @RequestParam(name = "keyword", required = false) String keyword,
                                                                 @RequestParam(name = "type", required = false) String type) {
-        return ResponseEntity.ok(adminService.getByType(pageIndex, pageSize, type));
+        return ResponseEntity.ok(adminService.getByType(pageIndex, pageSize, type, keyword));
     }
 
     @Secured(AuthoritiesConstants.ROLE_SUPER_ADMIN)

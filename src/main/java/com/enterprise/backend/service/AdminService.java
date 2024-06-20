@@ -24,18 +24,18 @@ public class AdminService {
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
 
-    public Page<UserResponse> getByType(int pageIndex, int pageSize, String type) {
-        Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
+    public Page<UserResponse> getByType(int pageIndex, int pageSize, String type, String keyword) {
+        Pageable paging = PageRequest.of(pageIndex - 1, pageSize, Sort.by(Sort.Direction.DESC, "created_date"));
         Page<User> userPage;
 
         if ("BANNED".equals(type)) {
-            userPage = userRepository.getAllByActive(false, paging);
+            userPage = userRepository.getAllByActive(false, keyword, paging);
         } else if ("USER".equals(type)) {
-            userPage = userRepository.getAllByRole(paging);
+            userPage = userRepository.getAllByRole(keyword, paging);
         } else if (type != null) {
-            userPage = userRepository.getAllByRole(type, paging);
+            userPage = userRepository.getAllByRole(type, keyword, paging);
         } else {
-            userPage = userRepository.findAll(paging);
+            userPage = userRepository.findByKeyWord(keyword, paging);
         }
 
         return userPage.map(UserResponse::from);
