@@ -132,6 +132,19 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
             ofCategories.add(ofCategory);
         });
 
+        var userId = SecurityUtil.getCurrentUsername();
+        if (StringUtils.isNotEmpty(userId)) {
+            var user = userRepository.findById(userId);
+            user.ifPresent(u -> {
+                var orderOpt = orderRepository.findByProductAndProductOrder_UserAndProductOrder_Type(product, u, OrderTypeStatus.FAVORITE);
+                orderOpt.ifPresent(orders -> {
+                    if (!orders.isEmpty()) {
+                        result.setFavorite(true);
+                    }
+                });
+            });
+        }
+
         result.setOfCategories(ofCategories);
         return result;
     }

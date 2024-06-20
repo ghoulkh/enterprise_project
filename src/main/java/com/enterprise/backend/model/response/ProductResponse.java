@@ -17,7 +17,7 @@ public class ProductResponse {
     private String createdDate;
     private String updatedDate;
     private List<OfCategory> ofCategories;
-
+    private boolean isFavorite;
     @Data
     public static class OfCategory {
         private Long id;
