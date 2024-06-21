@@ -1,5 +1,8 @@
 package com.enterprise.backend.service;
 
+import com.enterprise.backend.model.entity.Authority;
+import com.enterprise.backend.model.entity.User;
+import com.enterprise.backend.model.enums.OrderStatus;
 import com.enterprise.backend.util.Constants;
 import com.enterprise.backend.util.HTMLTemplateReader;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Set;
 
 @Service
 @Log4j2
@@ -55,12 +59,39 @@ public class EmailService {
         }
     }
 
-    public void sendNewOrder(String htmlContent, String receiver) {
-        String adminSubject = "Bạn có một đơn hàng mới";
-        new Thread(() -> sendMail(htmlContent, adminSubject, adminEmail, true));
+    public void sendNewOrder(String htmlContent, Set<User> receivers) {
+        if (receivers == null || receivers.isEmpty()) {
+            return;
+        }
+        receivers.forEach(receiver -> {
+            if (receiver.getAuthorities().stream()
+                    .anyMatch(authority -> Authority.Role.ROLE_SUPER_ADMIN.equals(authority.getRole())
+                            || Authority.Role.ROLE_ADMIN.equals(authority.getRole()))) {
+                String adminSubject = "Bạn có một đơn hàng mới";
+                new Thread(() -> sendMail(htmlContent, adminSubject, receiver.getEmail(), true)).start();
+            } else {
+                String receiverSubject = "Bạn vừa đặt một đơn hàng mới tại " + domainFrontEnd;
+                new Thread(() -> sendMail(htmlContent, receiverSubject, receiver.getEmail(), true)).start();
+            }
+        });
+    }
 
-        String receiverSubject = "Bạn vừa đặt một đơn hàng mới tại " + domainFrontEnd;
-        new Thread(() -> sendMail(htmlContent, receiverSubject, receiver, true));
+    public void sendUpdateOrder(String htmlContent, OrderStatus status, String receiver) {
+        StringBuilder receiverSubject = new StringBuilder();
+        switch (status) {
+            case PENDING:
+                receiverSubject.append("Đơn hàng của bạn đã được vận chuyển");
+                break;
+            case COMPLETED:
+                receiverSubject.append("Đơn hàng của bạn đã được hoàn thành");
+                break;
+            case CANCELLED:
+                receiverSubject.append("Đơn hàng của bạn đã bị hủy");
+                break;
+            default:
+                return;
+        }
+        new Thread(() -> sendMail(htmlContent, String.valueOf(receiverSubject), receiver, true)).start();
     }
 
     @Async
@@ -78,7 +109,7 @@ public class EmailService {
     }
 
     @Async
-    public void sendMailNewOrder(String htmlContent, String receiver) {
+    public void sendMailNewOrder(String htmlContent, Set<User> receiver) {
         sendNewOrder(htmlContent, receiver);
     }
 }

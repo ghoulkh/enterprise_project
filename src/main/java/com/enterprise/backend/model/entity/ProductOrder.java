@@ -38,6 +38,9 @@ public class ProductOrder extends Auditable implements Serializable {
     private String addressDetail;
     private String note;
 
+    @Lob
+    private String htmlContent;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;
 

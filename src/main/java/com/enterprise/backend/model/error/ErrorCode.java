@@ -16,6 +16,7 @@ public enum ErrorCode {
     BANNED_PERFORM_ACTION(UNAUTHORIZED.code, "Banded perform action!", HttpStatus.UNAUTHORIZED),
     POST_NOT_FOUND(NOT_FOUND.code, "Không tìm thấy bài viết!", HttpStatus.NOT_FOUND),
     CONFLICT_USERNAME(CONFLICT.code, "Conflict username!", HttpStatus.CONFLICT),
+    ROLE_ALREADY_EXIST(CONFLICT.code, "Role already exist!", HttpStatus.CONFLICT),
     INVALID_USERNAME_OR_PASSWORD(BAD_REQUEST.code, "Invalid username or password!", HttpStatus.BAD_REQUEST),
     BANNED_USER(ACCESS_DENIED.code, "User is banned", HttpStatus.FORBIDDEN),
     CODE_INVALID(BAD_REQUEST.code, "Code invalid!", HttpStatus.BAD_REQUEST),

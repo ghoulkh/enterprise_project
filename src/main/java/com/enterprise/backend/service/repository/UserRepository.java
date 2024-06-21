@@ -23,6 +23,10 @@ public interface UserRepository extends BaseCommonRepository<User, String> {
     @Query(value = "SELECT * FROM enterprise_project.user WHERE (:keyword IS NULL OR MATCH (phone, email) AGAINST (:keyword))", nativeQuery = true)
     List<User> searchByEmailOrPhone(String keyword);
 
+    @Query(value = "SELECT u.* FROM enterprise_project.user u INNER JOIN enterprise_project.authority a ON a.user_id = u.id " +
+            "WHERE a.role = 'ROLE_ADMIN' OR a.role = 'ROLE_SUPER_ADMIN' GROUP BY a.user_id", nativeQuery = true)
+    Optional<List<User>> findAllAdmin();
+
     @Query(value = "SELECT u.* FROM enterprise_project.user u " +
             "WHERE (:keyword IS NULL OR MATCH (phone, email) AGAINST (:keyword))", nativeQuery = true)
     Page<User> findByKeyWord(String keyword, Pageable pageable);

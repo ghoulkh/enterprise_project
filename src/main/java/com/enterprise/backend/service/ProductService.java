@@ -255,7 +255,15 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
             orderRepository.save(order);
         });
 
-        new Thread(() -> emailService.sendNewOrder(request.getHtmlContent(), request.getEmail())).start();
+        Set<User> receivers = new HashSet<>();
+        userRepository.findAllAdmin().ifPresent(receivers::addAll);
+        userRepository.findByEmail(request.getEmail()).ifPresentOrElse(receivers::add, () -> {
+            User user = new User();
+            user.setEmail(request.getEmail());
+            user.setAuthorities(Set.of(Authority.builder().role(Authority.Role.ROLE_USER).build()));
+            receivers.add(user);
+        });
+        new Thread(() -> emailService.sendNewOrder(request.getHtmlContent(), receivers)).start();
     }
 
     @Transactional
@@ -314,7 +322,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
 
     @Transactional
     public void updateOrderStatus(Long productOrderId, OrderStatus status) {
-        ProductOrder productOrder = productOrderRepository.findById(productOrderId)
+        var productOrder = productOrderRepository.findById(productOrderId)
                 .orElseThrow(() -> new EnterpriseBackendException(ErrorCode.ORDER_NOT_FOUND));
         switch (status) {
             case CANCELLED:
@@ -331,7 +339,7 @@ public class ProductService extends BaseService<Product, Long, ProductRepository
                 break;
         }
         productOrderRepository.updateProductOrderByStatus(productOrder.getId(), status);
-
+        emailService.sendUpdateOrder(productOrder.getHtmlContent(), status, productOrder.getEmail());
     }
 
     private void executeCategory(ProductRequest productRequest, Product product) {

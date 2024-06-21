@@ -52,9 +52,16 @@ public class AdminService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
+        authorityRepository.findByUserAndRole(user, role).ifPresent(authority -> {
+            throw new EnterpriseBackendException(ErrorCode.ROLE_ALREADY_EXIST);
+        });
+
         if (role == Authority.Role.ROLE_USER) {
             deleteAdminWithUserId(userId);
-            return;
+        }
+
+        if (role == Authority.Role.ROLE_ADMIN) {
+            deleteUserWithUserId(userId);
         }
 
         Authority authority = new Authority();
@@ -68,6 +75,16 @@ public class AdminService {
                 new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
 
         Authority authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_ADMIN).orElseThrow(() ->
+                new EnterpriseBackendException(ErrorCode.ROLE_NOT_FOUND));
+
+        authorityRepository.delete(authority);
+    }
+
+    public void deleteUserWithUserId(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EnterpriseBackendException(ErrorCode.USER_NOT_FOUND));
+
+        Authority authority = authorityRepository.findByUserAndRole(user, Authority.Role.ROLE_USER).orElseThrow(() ->
                 new EnterpriseBackendException(ErrorCode.ROLE_NOT_FOUND));
 
         authorityRepository.delete(authority);
