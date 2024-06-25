@@ -27,9 +27,6 @@ public class User extends Auditable implements Serializable {
     @Column(unique = true)
     private String phone;
 
-    @Enumerated(EnumType.STRING)
-    private Provider provider;
-
     private String address;
     private boolean isActive = true;
 
@@ -52,8 +49,4 @@ public class User extends Auditable implements Serializable {
     @ToString.Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     private Set<CodeForgotPass> codes;
-
-    public enum Provider {
-        LOCAL, GOOGLE, FACEBOOK
-    }
 }
