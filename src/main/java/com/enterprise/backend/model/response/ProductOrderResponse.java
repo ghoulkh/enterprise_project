@@ -17,6 +17,10 @@ public class ProductOrderResponse {
     private String status;
     private String type;
     private Set<OrderResponse> orders;
+    private String createdBy;
+    private String updatedBy;
+    private String createdDate;
+    private String updatedDate;
 
     @Data
     public static class OrderResponse {
